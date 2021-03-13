@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Kanye West's Turing Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body style="background: white;">
+    <div class="container" style="margin-top: 10px;">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Kanye West's Turing Test</h1>
+                <div style="padding-left: 0;padding-right: 0;padding-top: 10px;">
+                    <div class="table-responsive table-borderless text-center">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Humans</th>
+                                    <th>Robots</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="human-count">0</td>
+                                    <td id="robot-count">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-bottom: 10px;display: flex;flex-direction: column;justify-content: center;align-items: center;text-align: center;">
+        <div class="row">
+            <div class="col-md-12" style="margin-top: 50px;margin-left:10px">
+                <h5 style="text-align: center">Did Kanye tweet this?</h5>
+                <div class="card" style="width: 450px;box-shadow:0px 0px 2px 2px rgba(33,37,41,0.84)">
+                    <div class="card-body text-left">
+                        <h4 class="text-left card-title" style="font-size: 20px;"><strong>ye</strong><span style="font-size: 15px;color: grey;padding-left: 5px;">@kanyewest</span></h4>
+                        <p class="text-left card-text" id="tweet-text" style="max-width: 100%">{{ context['tweet'] }}</p>
+                        <span id="total_comments" style="padding-right: 35px;color: grey;"><i class="fa fa-comment-o" style="padding-right: 5px;"></i>{{ context['total_comments'] }}</span>
+                        <span id="total_retweets" style="padding-right: 35px;color: grey;"><i class="fa fa-retweet" style="padding-right: 5px;"></i>{{ context['total_retweets'] }}</span>
+                        <span id="total_hearts" style="color: grey;"><i class="fa fa-heart-o" style="padding-right: 5px;"></i>{{ context['total_hearts'] }}</span>
+                    </div>
+                </div>
+                <div class="row" style="padding-top: 15px;">
+                    <div class="col"><button value="0" class="btn" onclick="checkResult(this)" type="button" style="background: none;"><i class="fa fa-thumbs-up" style="color: green;font-size: 25px;"></i></button></div>
+                    <div class="col"><button value="1" class="btn" onclick="checkResult(this)" type="button"><i class="fa fa-thumbs-down" style="color: red;font-size: 25px;"></i></button></div>
+                    <input type="hidden" id="tweet_status" value="{{ context['status'] }}" name="status">
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer" style="position:absolute;bottom:0">
+      <div class="container">
+    <a target="_blank" rel="noreferrer noopener" href="https://github.com/tristan-robinette/kanye_turing_test/tree/master"><i class="fa fa-github" style="font-size:25px;"></i></a>
+    <a target="_blank" rel="noreferrer noopener" href="http://kanyeturingtest.herokuapp.com/"><i class="fa fa-lightbulb-o" style="font-size:25px;"></i></a>
+      </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+<script>
+function checkResult(button){
+
+    var correct = 'False'
+
+    var button_value = button.value
+    var tweet_status = document.getElementById('tweet_status').value
+
+    console.log(button_value)
+    console.log(tweet_status)
+
+    if (button_value == tweet_status) {
+        correct = 'True';
+        document.getElementById('human-count').innerText = +(document.getElementById('human-count').innerText) + +1
+        var div = '<div class="alert text-center alert-success" id="alert-window" style="position:absolute;left:0;right:0;margin:auto;width:200px;" role="alert">🙏 👨 🙏</div>'
+
+     }
+
+    else {
+        correct = 'False';
+        document.getElementById('robot-count').innerText = +(document.getElementById('robot-count').innerText) + +1
+        var div = '<div class="alert text-center alert-danger" id="alert-window" style="position:absolute;left:0;right:0;margin:auto;width:200px;" role="alert">🤖🤖🤖</div>'
+
+     }
+
+    $.ajax({
+    type : 'POST',
+    dataType: 'json',
+    url: "/gen/",
+    data: {'correct':correct},
+    success:function(json){
+
+    document.getElementById('tweet-text').innerText = json.tweet
+    document.getElementById('tweet_status').value = json.status
+
+    document.body.innerHTML += div
+    sleep(1000).then(() => {
+    removeFadeOut(document.getElementById('alert-window'), 2000);
+    });
+    }
+});
+};
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+function removeFadeOut( el, speed ) {
+    var seconds = speed/1000;
+    el.style.transition = "opacity "+seconds+"s ease";
+
+    el.style.opacity = 0;
+    setTimeout(function() {
+        el.parentNode.removeChild(el);
+    }, speed);
+}
+</script>
+</body>
+</html>
