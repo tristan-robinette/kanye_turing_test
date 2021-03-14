@@ -1,6 +1,8 @@
 
 ## _Kanye West Turing Test_
 
+Link --> https://kanye-turing-test-os.herokuapp.com/
+
 The Kanye West Turing Test is a simple website for knowing if you can detect the real from the fake Kanye. 
 
 Original concept: http://kanyeturingtest.herokuapp.com/
